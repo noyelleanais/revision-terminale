@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Révisions Terminale HG-EMC</title>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+margin:0;
+padding:20px;
+background:#f5f5f5;
+text-align:center;
+}
+
+h1{
+margin-bottom:10px;
+}
+
+#scoreboard{
+margin:20px;
+font-size:1.2em;
+font-weight:bold;
+}
+
+button{
+padding:12px 20px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+margin:5px;
+font-size:16px;
+}
+
+.histoire{
+background:linear-gradient(45deg,#ff8c00,#7b2cbf);
+color:white;
+}
+
+.geo{
+background:linear-gradient(45deg,#2196f3,#2e8b57);
+color:white;
+}
+
+.emc{
+background:#c62828;
+color:white;
+}
+
+#questionBox{
+margin-top:30px;
+background:white;
+padding:25px;
+border-radius:15px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+max-width:900px;
+margin-left:auto;
+margin-right:auto;
+}
+
+#categorie{
+font-size:1.3em;
+font-weight:bold;
+margin-bottom:15px;
+}
+
+#niveau{
+margin-bottom:15px;
+font-weight:bold;
+}
+
+#question{
+font-size:1.2em;
+margin-bottom:20px;
+}
+
+#reponse{
+margin-top:20px;
+color:#0b6623;
+font-weight:bold;
+}
+
+.scoreBtn{
+background:#444;
+color:white;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>🎲 Révisions Terminale HG-EMC</h1>
+
+<div id="scoreboard">
+
+Équipe A :
+<span id="scoreA">0</span>
+
+|
+
+Équipe B :
+<span id="scoreB">0</span>
+
+</div>
+
+<button class="scoreBtn" onclick="ajouterPoints('A',1)">+1 A</button>
+<button class="scoreBtn" onclick="ajouterPoints('A',2)">+2 A</button>
+<button class="scoreBtn" onclick="ajouterPoints('A',3)">+3 A</button>
+
+<button class="scoreBtn" onclick="ajouterPoints('B',1)">+1 B</button>
+<button class="scoreBtn" onclick="ajouterPoints('B',2)">+2 B</button>
+<button class="scoreBtn" onclick="ajouterPoints('B',3)">+3 B</button>
+
+<br><br>
+
+<button class="histoire" onclick="tirerQuestion('histoire')">
+🟧🟪 Histoire
+</button>
+
+<button class="geo" onclick="tirerQuestion('geo')">
+🟦🟩 Géographie
+</button>
+
+<button class="emc" onclick="tirerQuestion('emc')">
+🟥 EMC
+</button>
+
+<div id="questionBox">
+
+<div id="categorie"></div>
+
+<div id="niveau"></div>
+
+<div id="question">
+Choisissez une catégorie.
+</div>
+
+<button onclick="afficherReponse()">
+Afficher la réponse
+</button>
+
+<div id="reponse"></div>
+
+</div>
+
+<script>
+
+let reponseActuelle="";
+
+function ajouterPoints(equipe,points){
+
+const cible=document.getElementById(
+equipe==="A" ? "scoreA" : "scoreB"
+);
+
+cible.textContent=
+parseInt(cible.textContent)+points;
+
+}
+
+let questionsUtilisees = {
+histoire: [],
+geo: [],
+emc: []
+};
+
+function melanger(tableau){
+
+for(let i = tableau.length - 1; i > 0; i--){
+
+const j = Math.floor(Math.random() * (i + 1));
+
+[tableau[i], tableau[j]] =
+[tableau[j], tableau[i]];
+
+}
+
+return tableau;
+
+}
+
+const banqueQuestions = {
+
+histoire : [
+
+{
+niveau:"🟢 Facile",
+question:"Que signifie SDN ?",
+reponse:"Société des Nations."
+},
+
+{
+niveau:"🟢 Facile",
+question:"En quelle année est signé le traité de Versailles ?",
+reponse:"1919."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quel pays est désigné comme responsable de la Première Guerre mondiale dans le traité de Versailles ?",
+reponse:"L'Allemagne."
+},
+
+{
+niveau:"🟢 Facile",
+question:"En quelle année a lieu le krach de Wall Street ?",
+reponse:"1929."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Comment appelle-t-on le 24 octobre 1929 ?",
+reponse:"Le Jeudi noir (Black Thursday)."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quel président américain lance le New Deal ?",
+reponse:"Franklin Delano Roosevelt."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Qui dirige l'URSS dans les années 1930 ?",
+reponse:"Joseph Staline."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Qui devient chancelier allemand en 1933 ?",
+reponse:"Adolf Hitler."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quel parti dirige l'Allemagne nazie ?",
+reponse:"Le parti nazi (NSDAP)."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quel événement marque le début de la Seconde Guerre mondiale ?",
+reponse:"L'invasion de la Pologne en septembre 1939."
+},
+
+{
+niveau:"🟢 Facile",
+question:"En quelle année se termine la Seconde Guerre mondiale ?",
+reponse:"1945."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Comment appelle-t-on l'extermination des Juifs d'Europe ?",
+reponse:"La Shoah."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Que signifie ONU ?",
+reponse:"Organisation des Nations Unies."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quelle ville accueille le siège de l'ONU ?",
+reponse:"New York."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quels sont les deux grands vainqueurs de 1945 ?",
+reponse:"Les États-Unis et l'URSS."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Pourquoi l'Allemagne est-elle particulièrement touchée par la crise de 1929 ?",
+reponse:"Elle dépend fortement des capitaux américains."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Comment appelle-t-on les camps de travail forcé soviétiques ?",
+reponse:"Le Goulag."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quel symbole représente le nazisme ?",
+reponse:"La croix gammée."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quelle bataille marque un tournant sur le front de l'Est ?",
+reponse:"La bataille de Stalingrad."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quel événement du 6 juin 1944 favorise la libération de l'Europe occidentale ?",
+reponse:"Le débarquement de Normandie."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quel tribunal juge les dirigeants nazis après la guerre ?",
+reponse:"Le tribunal de Nuremberg."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quelle ville symbolise la division du monde pendant la Guerre froide ?",
+reponse:"Berlin."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quel mur est construit en 1961 ?",
+reponse:"Le mur de Berlin."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Comment appelle-t-on l'aide économique américaine à l'Europe après 1945 ?",
+reponse:"Le plan Marshall."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quel mouvement touche les colonies après 1945 ?",
+reponse:"La décolonisation."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quel conflit symbolise la décolonisation française ?",
+reponse:"La guerre d'Algérie."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quel général devient le premier président de la Ve République ?",
+reponse:"Charles de Gaulle."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quelle guerre oppose indirectement les États-Unis et l'URSS entre 1950 et 1953 ?",
+reponse:"La guerre de Corée."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Pourquoi parle-t-on d'un monde bipolaire après 1945 ?",
+reponse:"Parce que le monde est organisé autour de deux superpuissances : les États-Unis et l'URSS."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Pourquoi la Guerre froide est-elle qualifiée de 'froide' ?",
+reponse:"Car les deux blocs ne s'affrontent jamais directement dans une guerre ouverte."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Quel est l'objectif du New Deal ?",
+reponse:"Relancer l'économie américaine et réduire le chômage après la crise de 1929."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Pourquoi le traité de Versailles nourrit-il un sentiment de revanche en Allemagne ?",
+reponse:"Parce qu'il est perçu comme humiliant et impose de lourdes sanctions."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Pourquoi le régime nazi est-il qualifié de totalitaire ?",
+reponse:"Parce qu'il cherche à contrôler totalement la société."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Pourquoi le régime stalinien est-il qualifié de totalitaire ?",
+reponse:"Parce qu'il contrôle la population par la propagande, la terreur et le parti unique."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Pourquoi la guerre d'Algérie est-elle un tournant pour la France ?",
+reponse:"Elle accélère la décolonisation et favorise la naissance de la Ve République."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Quel rôle joue l'ONU après 1945 ?",
+reponse:"Maintenir la paix et favoriser la coopération internationale."
+}
+
+],
+
+geo : [
+
+{
+niveau:"🟢 Facile",
+question:"Quelle proportion de la surface terrestre est recouverte par les mers et océans ?",
+reponse:"Environ 70 %."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quelle part du commerce mondial transite par voie maritime ?",
+reponse:"Environ 90 % en volume."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Que signifie ZEE ?",
+reponse:"Zone Économique Exclusive."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Qu'est-ce qu'un archipel ?",
+reponse:"Un ensemble d'îles."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Qu'est-ce qu'un détroit ?",
+reponse:"Une bande de mer entre deux terres."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Qu'est-ce qu'un isthme ?",
+reponse:"Une bande de terre entre deux mers."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Qu'est-ce qu'un cap ?",
+reponse:"Une pointe de terre qui s'avance dans la mer."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Qu'est-ce qu'un golfe ?",
+reponse:"Une avancée de mer dans les terres."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quel est le principal moyen de transport du commerce mondial ?",
+reponse:"Le transport maritime."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quel est l'un des premiers ports mondiaux ?",
+reponse:"Shanghai."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quel océan est le plus vaste du monde ?",
+reponse:"L'océan Pacifique."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quel canal relie la Méditerranée à la mer Rouge ?",
+reponse:"Le canal de Suez."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quel canal relie l'océan Atlantique à l'océan Pacifique ?",
+reponse:"Le canal de Panama."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Combien de milles nautiques mesure une ZEE ?",
+reponse:"200 milles nautiques."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quel détroit est essentiel au commerce entre l'Asie et l'Europe ?",
+reponse:"Le détroit de Malacca."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quel détroit est stratégique pour le transport du pétrole du Golfe ?",
+reponse:"Le détroit d'Ormuz."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Qu'est-ce qu'un flux ?",
+reponse:"Un déplacement de personnes, de marchandises, de capitaux ou d'informations."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Citez un type de flux de la mondialisation.",
+reponse:"Flux de marchandises, financiers, humains ou d'informations."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Comment appelle-t-on le transport des marchandises dans des conteneurs standardisés ?",
+reponse:"La conteneurisation."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Qu'est-ce qu'une façade maritime ?",
+reponse:"Un espace littoral concentrant ports, activités et échanges."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Pourquoi les littoraux sont-ils attractifs ?",
+reponse:"Ils concentrent populations, activités économiques et échanges."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quel organisme international encadre le droit de la mer ?",
+reponse:"L'ONU."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Qu'appelle-t-on une ressource maritime ?",
+reponse:"Une richesse tirée de l'exploitation des mers et océans."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Citez une ressource énergétique exploitée en mer.",
+reponse:"Le pétrole ou le gaz offshore."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quel enjeu environnemental majeur menace les océans ?",
+reponse:"La pollution plastique."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Pourquoi les mers et océans sont-ils au cœur de la mondialisation ?",
+reponse:"Parce qu'ils concentrent les échanges mondiaux et de nombreuses ressources."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Pourquoi les océans sont-ils des espaces convoités ?",
+reponse:"Pour leurs ressources, leur position stratégique et les échanges qu'ils permettent."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Pourquoi certaines ZEE sont-elles disputées ?",
+reponse:"Parce qu'elles donnent accès à des ressources importantes."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Pourquoi parle-t-on de maritimisation de l'économie mondiale ?",
+reponse:"Parce que les échanges maritimes occupent une place croissante dans l'économie mondiale."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Pourquoi parle-t-on d'une gouvernance mondiale des océans ?",
+reponse:"Parce que plusieurs États et organisations doivent coopérer pour les gérer."
+}
+
+],
+
+emc : [
+
+{
+niveau:"🟢 Facile",
+question:"Quelle est la devise de la République française ?",
+reponse:"Liberté, Égalité, Fraternité."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quelle est la fête nationale française ?",
+reponse:"Le 14 juillet."
+},
+
+{
+niveau:"🟢 Facile",
+question:"À partir de quel âge vote-t-on en France ?",
+reponse:"18 ans."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Comment appelle-t-on le droit de voter ?",
+reponse:"Le suffrage universel."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Qui élit le Président de la République ?",
+reponse:"Les citoyens."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quelle est la durée du mandat présidentiel ?",
+reponse:"5 ans."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quel est le rôle principal de l'Assemblée nationale ?",
+reponse:"Voter les lois."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Qu'est-ce qu'un citoyen ?",
+reponse:"Une personne disposant de droits et de devoirs."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Donnez un exemple d'engagement citoyen.",
+reponse:"Voter, être bénévole ou participer à une association."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Comment appelle-t-on une information volontairement trompeuse ?",
+reponse:"Une fake news."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Pourquoi faut-il vérifier ses sources sur Internet ?",
+reponse:"Pour éviter les fausses informations."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Qui détient la souveraineté en démocratie ?",
+reponse:"Le peuple."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quel est le symbole féminin de la République ?",
+reponse:"Marianne."
+},
+
+{
+niveau:"🟢 Facile",
+question:"Quelles sont les couleurs du drapeau français ?",
+reponse:"Bleu, blanc et rouge."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quel est le rôle du Sénat ?",
+reponse:"Participer à l'élaboration des lois et représenter les collectivités territoriales."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Qu'est-ce que la laïcité ?",
+reponse:"La neutralité de l'État vis-à-vis des religions et la liberté de conscience."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quel texte fonde les institutions de la Ve République ?",
+reponse:"La Constitution de 1958."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quel texte proclame les droits fondamentaux en France en 1789 ?",
+reponse:"La Déclaration des droits de l'Homme et du citoyen."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quel pouvoir exerce le Parlement ?",
+reponse:"Le pouvoir législatif."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Quel pouvoir exerce le Gouvernement ?",
+reponse:"Le pouvoir exécutif."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Qu'est-ce qu'une démocratie représentative ?",
+reponse:"Un régime où les citoyens élisent des représentants."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Pourquoi la pluralité des médias est-elle importante ?",
+reponse:"Pour garantir la diversité des opinions."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Que protège la laïcité ?",
+reponse:"La liberté de croire ou de ne pas croire."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Pourquoi vote-t-on régulièrement en démocratie ?",
+reponse:"Pour choisir ses représentants."
+},
+
+{
+niveau:"🟡 Moyen",
+question:"Qu'est-ce qu'une abstention ?",
+reponse:"Le fait de ne pas voter lors d'une élection."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Pourquoi la liberté d'expression est-elle importante en démocratie ?",
+reponse:"Parce qu'elle permet le débat et l'expression des opinions."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Pourquoi la séparation des pouvoirs est-elle essentielle ?",
+reponse:"Pour éviter qu'une seule personne concentre tous les pouvoirs."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Pourquoi une démocratie a-t-elle besoin de citoyens engagés ?",
+reponse:"Parce que son fonctionnement repose sur la participation des citoyens."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Comment un citoyen peut-il agir sans être élu ?",
+reponse:"Par les associations, les pétitions, le bénévolat ou le débat public."
+},
+
+{
+niveau:"🔴 Difficile",
+question:"Pourquoi l'esprit critique est-il essentiel aujourd'hui ?",
+reponse:"Pour analyser les informations et éviter la manipulation."
+}
+
+]
+
+}; 
+
+function tirerQuestion(categorie){
+
+const liste = banqueQuestions[categorie];
+
+let disponible = [];
+
+for(let i=0;i<liste.length;i++){
+
+if(!questionsUtilisees[categorie].includes(i)){
+disponible.push(i);
+}
+
+}
+
+if(disponible.length===0){
+
+questionsUtilisees[categorie]=[];
+
+for(let i=0;i<liste.length;i++){
+disponible.push(i);
+}
+
+}
+
+const index =
+disponible[Math.floor(Math.random()*disponible.length)];
+
+questionsUtilisees[categorie].push(index);
+
+const q = liste[index];
+
+let nomCategorie="";
+
+if(categorie==="histoire"){
+nomCategorie="🟧🟪 Histoire";
+}
+
+if(categorie==="geo"){
+nomCategorie="🟦🟩 Géographie";
+}
+
+if(categorie==="emc"){
+nomCategorie="🟥 EMC";
+}
+
+document.getElementById("categorie").textContent =
+nomCategorie;
+
+document.getElementById("niveau").textContent =
+q.niveau;
+
+document.getElementById("question").textContent =
+q.question;
+
+document.getElementById("reponse").textContent =
+"";
+
+reponseActuelle = q.reponse;
+
+}
+
+function afficherReponse(){
+
+document.getElementById("reponse").textContent =
+reponseActuelle;
+
+}
+</script>
+
+</body>
+
+</html>
